@@ -2,602 +2,469 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>五〇六所 | AI工具与趣味应用</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>五〇六所 - 现代AI应用导航</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
-        * {
-            font-family: 'Inter', system-ui, sans-serif;
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .animate-fade-in {
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-        
-        .pb-safe {
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        
-        .line-clamp-1 {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 1;
-        }
-        
-        .line-clamp-2 {
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-box-orient: vertical;
-            -webkit-line-clamp: 2;
-        }
-        
-        /* 自定义滚动条 */
+
+        /* 现代滚动条样式 */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
-        
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
+            background: transparent;
         }
-        
         ::-webkit-scrollbar-thumb {
-            background: #888;
-            border-radius: 4px;
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        /* 卡片悬浮平滑动画 */
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
         }
         
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
+        /* 文本截断 */
+        .line-clamp-1 { display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
-    <div id="app" class="min-h-screen flex flex-col md:flex-row">
-        <!-- 桌面端侧边栏 -->
-        <aside id="desktop-sidebar" class="hidden md:flex flex-col w-64 bg-white border-r border-gray-200 h-screen sticky top-0 flex-shrink-0 z-20">
-            <div class="p-6 flex items-center space-x-3 cursor-pointer" onclick="handleNavClick('home')">
-                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xl shadow-sm">506</div>
-                <span class="font-extrabold text-xl tracking-wide text-gray-800">五〇六所</span>
-            </div>
-            <nav class="flex-1 mt-6">
-                <button onclick="handleNavClick('home')" id="nav-home" class="flex flex-col md:flex-row items-center justify-center md:justify-start w-full p-3 md:px-6 md:py-4 transition-colors text-blue-600 bg-blue-50 md:bg-gray-50 md:border-r-4 md:border-blue-600">
-                    <i class="fas fa-home w-6 h-6 md:w-5 md:h-5 md:mr-3 mb-1 md:mb-0"></i>
-                    <span class="text-[10px] md:text-sm font-medium">主页</span>
-                </button>
-                <button onclick="handleNavClick('apps')" id="nav-apps" class="flex flex-col md:flex-row items-center justify-center md:justify-start w-full p-3 md:px-6 md:py-4 transition-colors text-gray-500 hover:text-blue-600 hover:bg-gray-50">
-                    <i class="fas fa-gamepad w-6 h-6 md:w-5 md:h-5 md:mr-3 mb-1 md:mb-0"></i>
-                    <span class="text-[10px] md:text-sm font-medium">趣味APP</span>
-                </button>
-                <button onclick="handleNavClick('workflows')" id="nav-workflows" class="flex flex-col md:flex-row items-center justify-center md:justify-start w-full p-3 md:px-6 md:py-4 transition-colors text-gray-500 hover:text-blue-600 hover:bg-gray-50">
-                    <i class="fas fa-microchip w-6 h-6 md:w-5 md:h-5 md:mr-3 mb-1 md:mb-0"></i>
-                    <span class="text-[10px] md:text-sm font-medium">AI工作流</span>
-                </button>
-            </nav>
-            <div class="p-6 text-xs text-gray-400 text-center">
-                © 2026 五〇六所
-            </div>
-        </aside>
+<body class="bg-[#F4F5F7] text-gray-800 h-screen w-full overflow-hidden flex flex-col md:flex-row">
 
-        <!-- 主内容区域 -->
-        <main class="flex-1 flex flex-col min-w-0 pb-16 md:pb-0">
-            <!-- 顶部搜索和筛选栏 -->
-            <div class="bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-gray-200 p-4 md:px-8 md:py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-                <!-- 移动端标题 -->
-                <div class="md:hidden w-full flex items-center justify-center mb-2">
-                    <div class="w-8 h-8 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold text-sm shadow-sm mr-2">506</div>
-                    <span class="font-extrabold text-lg tracking-wide text-gray-800">五〇六所</span>
-                </div>
+    <!-- 导航栏：电脑端左侧，手机端底部 -->
+    <nav class="flex-shrink-0 bg-white border-t md:border-t-0 md:border-r border-gray-100 flex md:flex-col justify-around md:justify-start items-center md:w-28 order-last md:order-first h-14 md:h-full w-full fixed md:static bottom-0 z-50 shadow-[0_-4px_20px_rgba(0,0,0,0.02)] md:shadow-none">
+        
+        <!-- Logo (仅电脑端显示在导航栏顶部) -->
+        <div class="hidden md:flex flex-col items-center py-8 w-full cursor-pointer hover:opacity-80 transition-opacity" onclick="app.navigate('home')">
+            <div class="w-12 h-12 bg-blue-500 rounded-2xl flex items-center justify-center text-white font-bold text-xl mb-3 shadow-lg shadow-blue-500/30">506</div>
+            <span class="text-xs font-bold text-gray-800 tracking-widest">五〇六所</span>
+        </div>
 
-                <!-- 搜索框 -->
-                <div class="relative w-full sm:max-w-md">
-                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4"></i>
-                    <input 
-                        type="text" 
-                        id="search-input"
-                        placeholder="搜索应用或开发者..." 
-                        class="w-full pl-10 pr-4 py-2 bg-gray-100 border-transparent focus:bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 rounded-full text-sm transition-all outline-none"
-                    >
-                </div>
-
-                <!-- 排序按钮 -->
-                <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-                    <button 
-                        id="sort-latest"
-                        onclick="setSortBy('latest')"
-                        class="flex items-center px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-gray-800 text-white"
-                    >
-                        <i class="far fa-clock w-4 h-4 mr-1.5"></i>
-                        最新
-                    </button>
-                    <button 
-                        id="sort-hottest"
-                        onclick="setSortBy('hottest')"
-                        class="flex items-center px-4 py-1.5 rounded-full text-sm font-medium transition-colors bg-gray-100 text-gray-600 hover:bg-gray-200"
-                    >
-                        <i class="fas fa-fire w-4 h-4 mr-1.5"></i>
-                        最热
-                    </button>
-                </div>
-            </div>
-
-            <!-- 内容滚动区域 -->
-            <div id="content-area" class="p-4 md:p-8 flex-1 overflow-x-hidden">
-                <!-- 这里的内容会由JavaScript动态生成 -->
-                <div id="home-view" class="space-y-10 animate-fade-in">
-                    <!-- Hero Banner -->
-                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 md:p-10 text-white shadow-lg relative overflow-hidden">
-                        <div class="relative z-10 max-w-2xl">
-                            <h1 class="text-2xl md:text-4xl font-extrabold mb-3 tracking-tight">驱动未来的工作与娱乐方式</h1>
-                            <p class="text-purple-100 md:text-lg mb-6 leading-relaxed">五〇六所致力于打造最前沿的AI工具与趣味应用。探索我们的平台，发现能激发灵感、提升效率的智能模块。</p>
-                            <button onclick="handleNavClick('workflows')" class="bg-white text-purple-700 px-6 py-2.5 rounded-full font-bold text-sm hover:bg-purple-50 transition-colors shadow-md">
-                                立即探索
-                            </button>
-                        </div>
-                        <!-- 装饰背景形状 -->
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/2 -translate-y-1/4 blur-2xl"></div>
-                        <div class="absolute bottom-0 right-32 w-48 h-48 bg-purple-400 opacity-20 rounded-full transform translate-y-1/2 blur-xl"></div>
-                    </div>
-
-                    <!-- 首页部分 -->
-                    <section>
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg md:text-xl font-bold flex items-center text-gray-800">
-                                <i class="fas fa-gamepad w-5 h-5 mr-2 text-blue-500"></i> 推荐趣味APP
-                            </h2>
-                            <button onclick="handleNavClick('apps')" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                                查看全部 <i class="fas fa-chevron-right w-4 h-4 ml-0.5"></i>
-                            </button>
-                        </div>
-                        <div id="home-apps" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                            <!-- 趣味APP卡片会在这里动态生成 -->
-                        </div>
-                    </section>
-
-                    <section>
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-lg md:text-xl font-bold flex items-center text-gray-800">
-                                <i class="fas fa-microchip w-5 h-5 mr-2 text-purple-500"></i> 推荐AI工作流
-                            </h2>
-                            <button onclick="handleNavClick('workflows')" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                                查看全部 <i class="fas fa-chevron-right w-4 h-4 ml-0.5"></i>
-                            </button>
-                        </div>
-                        <div id="home-workflows" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                            <!-- AI工作流卡片会在这里动态生成 -->
-                        </div>
-                    </section>
-                </div>
-            </div>
-        </main>
-
-        <!-- 移动端底部导航 -->
-        <nav class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 pb-safe z-50 flex justify-around shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
-            <button onclick="handleNavClick('home')" id="mobile-nav-home" class="flex flex-col items-center justify-center w-full p-3 transition-colors text-blue-600">
-                <i class="fas fa-home w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-medium">主页</span>
+        <!-- 菜单项 -->
+        <div class="flex md:flex-col w-full md:mt-2 justify-around md:justify-start md:space-y-2 px-2 md:px-4">
+            <button onclick="app.navigate('home')" data-nav="home" class="nav-btn w-full flex flex-col items-center justify-center py-2 md:py-4 rounded-xl text-gray-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all">
+                <i data-lucide="home" class="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-1.5"></i>
+                <span class="text-[10px] md:text-xs font-medium">主页</span>
             </button>
-            <button onclick="handleNavClick('apps')" id="mobile-nav-apps" class="flex flex-col items-center justify-center w-full p-3 transition-colors text-gray-500">
-                <i class="fas fa-gamepad w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-medium">趣味APP</span>
+            <button onclick="app.navigate('app')" data-nav="app" class="nav-btn w-full flex flex-col items-center justify-center py-2 md:py-4 rounded-xl text-gray-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all">
+                <i data-lucide="layout-grid" class="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-1.5"></i>
+                <span class="text-[10px] md:text-xs font-medium">趣味APP</span>
             </button>
-            <button onclick="handleNavClick('workflows')" id="mobile-nav-workflows" class="flex flex-col items-center justify-center w-full p-3 transition-colors text-gray-500">
-                <i class="fas fa-microchip w-6 h-6 mb-1"></i>
-                <span class="text-[10px] font-medium">AI工作流</span>
+            <button onclick="app.navigate('workflow')" data-nav="workflow" class="nav-btn w-full flex flex-col items-center justify-center py-2 md:py-4 rounded-xl text-gray-400 hover:text-blue-500 hover:bg-blue-50/50 transition-all">
+                <i data-lucide="cpu" class="w-5 h-5 md:w-6 md:h-6 mb-1 md:mb-1.5"></i>
+                <span class="text-[10px] md:text-xs font-medium">AI工作流</span>
             </button>
-        </nav>
-    </div>
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+        
+        <!-- 移动端顶部 Logo 栏 -->
+        <div class="md:hidden flex items-center justify-center p-3 bg-white border-b border-gray-100 flex-shrink-0 z-40 relative">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold text-xs shadow-md">506</div>
+                <span class="font-bold text-gray-800 text-sm tracking-widest">五〇六所</span>
+            </div>
+        </div>
+
+        <!-- 顶部功能区 (搜索与排序) -->
+        <header class="bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 md:px-8 py-3 md:py-4 flex flex-col sm:flex-row gap-3 items-center justify-between flex-shrink-0 z-30 sticky top-0">
+            <!-- 搜索框 -->
+            <div class="relative w-full sm:w-96 group">
+                <i data-lucide="search" class="absolute left-3.5 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 group-focus-within:text-blue-500 transition-colors"></i>
+                <input type="text" id="searchInput" placeholder="搜索卡片标题或开发者名字..." 
+                       class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-transparent rounded-xl focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10 transition-all text-sm outline-none text-gray-700 placeholder-gray-400"
+                       oninput="app.handleSearch(event)">
+            </div>
+            <!-- 排序按钮 -->
+            <div class="flex gap-2 w-full sm:w-auto">
+                <button onclick="app.setSort('time')" id="btnSortTime" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                    <i data-lucide="arrow-down" id="iconSortTime" class="w-4 h-4"></i> 最新
+                </button>
+                <button onclick="app.setSort('usage')" id="btnSortUsage" class="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50">
+                    <i data-lucide="flame" class="w-4 h-4"></i> 最热
+                </button>
+            </div>
+        </header>
+
+        <!-- 滚动内容展示区 -->
+        <div id="contentArea" class="flex-1 overflow-y-auto p-4 md:p-8 pb-20 md:pb-8">
+            <!-- 动态内容注入点 -->
+        </div>
+    </main>
 
     <script>
-        // 模拟数据
-        const initialDevelopers = {
-            'dev1': { id: 'dev1', name: '李工程师', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Felix', bio: '专注于自然语言处理与效率工具开发。' },
-            'dev2': { id: 'dev2', name: '王研究员', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aneka', bio: '资深AI算法专家，热爱探索趣味交互。' },
-            'dev3': { id: 'dev3', name: '张极客', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Jude', bio: '全栈开发者，致力于将复杂工作流简单化。' },
+        // --- 模拟数据 (Mock Data) ---
+        const MOCK_DEVS = {
+            'd1': { id: 'd1', name: '李白不白', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Libai&backgroundColor=e2e8f0', bio: 'AI创意设计先锋，热爱探索视觉生成。' },
+            'd2': { id: 'd2', name: 'TechGeek', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Tech&backgroundColor=bfdbfe', bio: '效率工具狂魔，擅长复杂工作流编排。' },
+            'd3': { id: 'd3', name: 'DataNinja', avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Data&backgroundColor=fef08a', bio: '数据分析专家，用AI赋能业务增长。' }
         };
 
-        const initialCards = [
-            { id: 1, type: 'app', title: '剧本杀推理大师', image: 'https://images.unsplash.com/photo-1579532537598-459ecdaf39cc?auto=format&fit=crop&q=80&w=400&h=200', desc: '沉浸式AI剧本杀体验，自动生成悬疑推理剧情。', publishTime: 1672531200000, usageCount: 0, devId: 'dev2' },
-            { id: 2, type: 'workflow', title: '周报自动生成器', image: 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&q=80&w=400&h=200', desc: '连接日历与任务列表，一键生成精美排版的本周工作汇报。', publishTime: 1675209600000, usageCount: 0, devId: 'dev1' },
-            { id: 3, type: 'app', title: '像素风头像生成', image: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=400&h=200', desc: '上传照片，利用AI瞬间转化为复古像素风格头像。', publishTime: 1677628800000, usageCount: 0, devId: 'dev2' },
-            { id: 4, type: 'workflow', title: '多语言文案翻译流', image: 'https://images.unsplash.com/photo-1451226428352-cf66bf8a0317?auto=format&fit=crop&q=80&w=400&h=200', desc: '支持批量输入，自动润色并翻译为10种主流语言。', publishTime: 1680307200000, usageCount: 9998, devId: 'dev3' },
-            { id: 5, type: 'workflow', title: '数据清洗清洗助手', image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=400&h=200', desc: '针对杂乱无章的Excel数据，提供一键去重、格式化功能。', publishTime: 1682899200000, usageCount: 0, devId: 'dev1' },
-            { id: 6, type: 'app', title: '塔罗牌每日占卜', image: 'https://images.unsplash.com/photo-1633421257371-125032a99182?auto=format&fit=crop&q=80&w=400&h=200', desc: '结合AI解析牌意，为你提供每日运势指引。', publishTime: 1685577600000, usageCount: 0, devId: 'dev3' },
+        const NOW = Date.now();
+        const DAY = 86400000;
+        
+        // 初始卡片数据
+        const MOCK_CARDS = [
+            { id: 'c1', type: 'app', title: '小红书爆款文案生成', image: 'https://images.unsplash.com/photo-1616469829581-73993eb86b02?auto=format&fit=crop&q=80&w=400', desc: '一键生成符合小红书调性的网感文案，包含Emoji和精美排版。', time: NOW - 1*DAY, usage: 12500, devId: 'd1' },
+            { id: 'c2', type: 'app', title: '塔罗牌每日占卜', image: 'https://images.unsplash.com/photo-1550082390-880fa9867c46?auto=format&fit=crop&q=80&w=400', desc: 'AI塔罗师为你解读今日运势，提供事业与感情指引。', time: NOW - 5*DAY, usage: 8900, devId: 'd1' },
+            { id: 'c3', type: 'app', title: '超写实头像定制', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=400', desc: '上传照片，一键生成赛博朋克、二次元等多种风格的高清头像。', time: NOW - 2*DAY, usage: 24000, devId: 'd1' },
+            { id: 'c4', type: 'app', title: '高情商回复助手', image: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&q=80&w=400', desc: '复制对方的话，AI教你如何高情商回复，化解社交尴尬。', time: NOW - 10*DAY, usage: 3500, devId: 'd2' },
+            { id: 'c5', type: 'app', title: '晚安故事盒子', image: 'https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&q=80&w=400', desc: '输入主角名字，每天自动生成一个温馨治愈的睡前童话故事。', time: NOW - 15*DAY, usage: 15600, devId: 'd3' },
+            
+            { id: 'w1', type: 'workflow', title: '全自动竞品分析报告', image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=400', desc: '输入产品名称，自动抓取网络数据并生成多维度的深度竞品分析PPT大纲。', time: NOW - 0.5*DAY, usage: 4200, devId: 'd3' },
+            { id: 'w2', type: 'workflow', title: '长视频提取核心笔记', image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=400', desc: '输入B站或YouTube链接，AI提取字幕并总结成结构化思维导图节点。', time: NOW - 3*DAY, usage: 18000, devId: 'd2' },
+            { id: 'w3', type: 'workflow', title: '沉浸式小说推文生成', image: 'https://images.unsplash.com/photo-1455390582262-044cdead27d8?auto=format&fit=crop&q=80&w=400', desc: '输入小说核心大纲，自动扩写为悬疑感拉满的万字推文，并配上语音文案。', time: NOW - 7*DAY, usage: 31000, devId: 'd1' },
+            { id: 'w4', type: 'workflow', title: '电商商品主图批量换背景', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400', desc: '自动抠图并融合进高级生活场景，提升电商商品点击率。', time: NOW - 12*DAY, usage: 9800, devId: 'd2' },
+            { id: 'w5', type: 'workflow', title: '学术论文润色与降重', image: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?auto=format&fit=crop&q=80&w=400', desc: '符合SCI标准的学术英语润色，自动同义替换降低重复率。', time: NOW - 20*DAY, usage: 45000, devId: 'd3' }
         ];
 
-        // 应用状态
-        let state = {
-            currentView: 'home',
-            searchQuery: '',
-            sortBy: 'latest',
-            selectedDevId: null,
-            cards: [...initialCards]
+        // --- 应用核心逻辑 ---
+        const app = {
+            state: {
+                view: 'home', // 'home', 'app', 'workflow', 'dev'
+                searchQuery: '',
+                sortBy: 'time', // 'time', 'usage'
+                timeDir: 'desc', // 'desc' (晚在前), 'asc' (早在前)
+                devId: null
+            },
+            
+            cards: [...MOCK_CARDS],
+            devs: MOCK_DEVS,
+
+            init() {
+                this.updateNavUI();
+                this.updateSortUI();
+                this.render();
+            },
+
+            // 路由导航
+            navigate(view, devId = null) {
+                this.state.view = view;
+                if (view === 'dev') {
+                    this.state.devId = devId;
+                }
+                
+                // Clear search when switching main tabs for better UX (optional, but standard)
+                if (view !== 'dev' && this.state.searchQuery !== '') {
+                   this.state.searchQuery = '';
+                   document.getElementById('searchInput').value = '';
+                }
+                
+                this.updateNavUI();
+                this.render();
+            },
+
+            // 搜索处理
+            handleSearch(e) {
+                this.state.searchQuery = e.target.value.trim().toLowerCase();
+                this.render();
+            },
+
+            // 排序处理
+            setSort(type) {
+                if (type === 'time') {
+                    if (this.state.sortBy === 'time') {
+                        // 切换方向
+                        this.state.timeDir = this.state.timeDir === 'desc' ? 'asc' : 'desc';
+                    } else {
+                        this.state.sortBy = 'time';
+                        this.state.timeDir = 'asc'; // 根据题目：点击最新，早的在前
+                    }
+                } else if (type === 'usage') {
+                    this.state.sortBy = 'usage';
+                }
+                this.updateSortUI();
+                this.render();
+            },
+
+            // 卡片点击
+            handleCardClick(cardId) {
+                const cardIndex = this.cards.findIndex(c => c.id === cardId);
+                if (cardIndex !== -1) {
+                    this.cards[cardIndex].usage++;
+                    // 局部更新视图以提高性能
+                    const usageEl = document.getElementById(`usage-${cardId}`);
+                    if (usageEl) {
+                        usageEl.innerText = this.formatUsage(this.cards[cardIndex].usage);
+                    }
+                    window.open('https://www.coze.cn/template', '_blank');
+                }
+            },
+
+            // --- 格式化工具 ---
+            formatUsage(num) {
+                if (num < 10000) return num.toString();
+                return (num / 10000).toFixed(1) + '万';
+            },
+
+            formatDate(ts) {
+                const d = new Date(ts);
+                const mm = String(d.getMonth() + 1).padStart(2, '0');
+                const dd = String(d.getDate()).padStart(2, '0');
+                return `${d.getFullYear()}-${mm}-${dd}`;
+            },
+
+            // --- 渲染逻辑 ---
+            
+            // 更新导航高亮状态
+            updateNavUI() {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    if (btn.dataset.nav === this.state.view || (this.state.view === 'dev' && btn.dataset.nav === 'home')) { 
+                        // dev profile doesn't have a nav button, fall back to default styling
+                        if(btn.dataset.nav === this.state.view) {
+                            btn.classList.add('text-blue-600', 'bg-blue-50/80');
+                            btn.classList.remove('text-gray-400');
+                        } else {
+                            btn.classList.remove('text-blue-600', 'bg-blue-50/80');
+                            btn.classList.add('text-gray-400');
+                        }
+                    } else {
+                        btn.classList.remove('text-blue-600', 'bg-blue-50/80');
+                        btn.classList.add('text-gray-400');
+                    }
+                });
+            },
+
+            // 更新排序按钮 UI
+            updateSortUI() {
+                const btnTime = document.getElementById('btnSortTime');
+                const btnUsage = document.getElementById('btnSortUsage');
+                const iconTime = document.getElementById('iconSortTime');
+
+                if (this.state.sortBy === 'time') {
+                    btnTime.className = "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-blue-50 text-blue-600 border border-blue-100 shadow-sm";
+                    btnUsage.className = "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
+                    iconTime.setAttribute('data-lucide', this.state.timeDir === 'desc' ? 'arrow-down' : 'arrow-up');
+                } else {
+                    btnTime.className = "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-white border border-gray-200 text-gray-600 hover:bg-gray-50";
+                    btnUsage.className = "flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all bg-blue-50 text-blue-600 border border-blue-100 shadow-sm";
+                    iconTime.setAttribute('data-lucide', 'arrow-down'); // 恢复默认图标
+                }
+                
+                // Refresh specific icons without wiping whole view
+                if(window.lucide) {
+                   lucide.createIcons();
+                }
+            },
+
+            // 过滤与排序卡片列表
+            getFilteredAndSortedCards(baseCards) {
+                let result = [...baseCards];
+                
+                // 搜索过滤
+                if (this.state.searchQuery) {
+                    const q = this.state.searchQuery;
+                    result = result.filter(c => {
+                        const devName = this.devs[c.devId]?.name || '';
+                        return c.title.toLowerCase().includes(q) || devName.toLowerCase().includes(q);
+                    });
+                }
+
+                // 排序
+                if (this.state.sortBy === 'time') {
+                    result.sort((a, b) => this.state.timeDir === 'desc' ? b.time - a.time : a.time - b.time);
+                } else if (this.state.sortBy === 'usage') {
+                    // 使用次数降序
+                    result.sort((a, b) => b.usage - a.usage);
+                }
+
+                return result;
+            },
+
+            // 单个卡片的 HTML 模板
+            renderCardHTML(card) {
+                const dev = this.devs[card.devId];
+                return `
+                <div class="card-hover bg-white rounded-2xl overflow-hidden border border-gray-100 cursor-pointer flex flex-col h-full group shadow-sm" onclick="app.handleCardClick('${card.id}')">
+                    <!-- 图片区 -->
+                    <div class="aspect-video w-full overflow-hidden relative bg-gray-50 border-b border-gray-50">
+                        <img src="${card.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="${card.title}" loading="lazy">
+                        <div class="absolute top-2 right-2 bg-white/95 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-semibold text-gray-600 flex items-center gap-1 shadow-sm border border-gray-100/50">
+                            <i data-lucide="mouse-pointer-click" class="w-3 h-3 text-blue-500"></i> <span id="usage-${card.id}">${this.formatUsage(card.usage)}</span>
+                        </div>
+                    </div>
+                    <!-- 内容区 -->
+                    <div class="p-3 md:p-4 flex flex-col flex-1">
+                        <h3 class="font-bold text-gray-800 text-sm md:text-base mb-1.5 line-clamp-1 group-hover:text-blue-600 transition-colors">${card.title}</h3>
+                        <p class="text-xs text-gray-500 mb-4 line-clamp-2 flex-1 leading-relaxed">${card.desc}</p>
+                        
+                        <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
+                            <div class="flex items-center gap-2 hover:bg-gray-50 p-1 -ml-1 rounded-lg transition-colors cursor-pointer" onclick="event.stopPropagation(); app.navigate('dev', '${dev.id}')">
+                                <img src="${dev.avatar}" class="w-5 h-5 md:w-6 md:h-6 rounded-full bg-gray-100 border border-gray-200" alt="${dev.name}">
+                                <span class="text-[10px] md:text-xs font-medium text-gray-600 hover:text-blue-600 transition-colors">${dev.name}</span>
+                            </div>
+                            <span class="text-[10px] text-gray-400 bg-gray-50 px-1.5 py-0.5 rounded-md">${this.formatDate(card.time)}</span>
+                        </div>
+                    </div>
+                </div>
+                `;
+            },
+
+            // 网格视图模板
+            renderGridHTML(cards, emptyMsg = "未找到匹配的模板") {
+                if (cards.length === 0) {
+                    return `
+                    <div class="flex flex-col items-center justify-center py-20 text-gray-400">
+                        <i data-lucide="inbox" class="w-16 h-16 mb-4 opacity-50"></i>
+                        <p class="text-sm font-medium">${emptyMsg}</p>
+                    </div>`;
+                }
+                
+                // 手机端双排，电脑端多排
+                let html = '<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-5">';
+                cards.forEach(card => {
+                    html += this.renderCardHTML(card);
+                });
+                html += '</div>';
+                return html;
+            },
+
+            // 获取主页特定区块数据: 1最新 + 3最火
+            getHomeSectionCards(type) {
+                const typeCards = this.cards.filter(c => c.type === type);
+                if (typeCards.length === 0) return [];
+                
+                // 寻找最新的1个
+                const newest = [...typeCards].sort((a, b) => b.time - a.time)[0];
+                
+                // 寻找最火的3个 (排除最新的那个)
+                const hottest = [...typeCards]
+                    .filter(c => c.id !== newest.id)
+                    .sort((a, b) => b.usage - a.usage)
+                    .slice(0, 3);
+                    
+                return [newest, ...hottest];
+            },
+
+            // 渲染主视图逻辑
+            render() {
+                const contentArea = document.getElementById('contentArea');
+                let html = '';
+
+                // 核心控制流: 如果有搜索词，强制显示全局搜索结果网格
+                if (this.state.searchQuery !== '') {
+                    // 全局搜索视图
+                    let baseCards = this.cards;
+                    if (this.state.view === 'app') baseCards = this.cards.filter(c => c.type === 'app');
+                    if (this.state.view === 'workflow') baseCards = this.cards.filter(c => c.type === 'workflow');
+                    if (this.state.view === 'dev') baseCards = this.cards.filter(c => c.devId === this.state.devId);
+                    
+                    const finalCards = this.getFilteredAndSortedCards(baseCards);
+                    html = `
+                        <div class="mb-4 text-sm text-gray-500">找到 ${finalCards.length} 个结果</div>
+                        ${this.renderGridHTML(finalCards)}
+                    `;
+                } 
+                else {
+                    // 正常视图渲染
+                    switch (this.state.view) {
+                        case 'home':
+                            const homeAppCards = this.getHomeSectionCards('app');
+                            const homeWfCards = this.getHomeSectionCards('workflow');
+                            
+                            html = `
+                            <!-- 品牌价值主张区 -->
+                            <div class="bg-gradient-to-br from-[#8b5cf6] to-[#6366f1] rounded-2xl p-6 md:p-10 mb-8 md:mb-12 text-white shadow-lg relative overflow-hidden group">
+                                <div class="relative z-10 max-w-2xl">
+                                    <h1 class="text-2xl md:text-4xl font-bold mb-3 tracking-tight">探索 AI 工作流的无限可能</h1>
+                                    <p class="text-indigo-100 text-xs md:text-sm leading-relaxed opacity-90 group-hover:opacity-100 transition-opacity">
+                                        发现最有趣的AI应用与最高效的自动化工作流，极速提升个人创造力与团队生产力。加入五〇六所，开启智能时代新体验。
+                                    </p>
+                                </div>
+                                <!-- 装饰图形 -->
+                                <div class="absolute top-0 right-0 -mt-12 -mr-12 w-48 h-48 md:w-64 md:h-64 bg-white opacity-10 rounded-full blur-3xl"></div>
+                                <div class="absolute bottom-0 right-20 -mb-10 w-32 h-32 md:w-48 md:h-48 bg-blue-300 opacity-20 rounded-full blur-2xl"></div>
+                            </div>
+                            
+                            <!-- 推荐趣味APP -->
+                            <div class="mb-8 md:mb-12">
+                                <div class="flex items-center justify-between mb-4 md:mb-6">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+                                        <div class="w-1.5 h-5 bg-blue-500 rounded-full"></div> 推荐趣味APP
+                                    </h2>
+                                    <button onclick="app.navigate('app')" class="text-xs font-medium text-gray-500 hover:text-blue-600 transition-colors flex items-center">查看全部 <i data-lucide="chevron-right" class="w-3 h-3 ml-0.5"></i></button>
+                                </div>
+                                ${this.renderGridHTML(homeAppCards, "暂无趣味APP")}
+                            </div>
+
+                            <!-- 推荐AI工作流 -->
+                            <div>
+                                <div class="flex items-center justify-between mb-4 md:mb-6">
+                                    <h2 class="text-lg md:text-xl font-bold text-gray-800 flex items-center gap-2">
+                                        <div class="w-1.5 h-5 bg-[#8b5cf6] rounded-full"></div> 推荐AI工作流
+                                    </h2>
+                                    <button onclick="app.navigate('workflow')" class="text-xs font-medium text-gray-500 hover:text-blue-600 transition-colors flex items-center">查看全部 <i data-lucide="chevron-right" class="w-3 h-3 ml-0.5"></i></button>
+                                </div>
+                                ${this.renderGridHTML(homeWfCards, "暂无AI工作流")}
+                            </div>
+                            `;
+                            break;
+
+                        case 'app':
+                            const apps = this.getFilteredAndSortedCards(this.cards.filter(c => c.type === 'app'));
+                            html = this.renderGridHTML(apps);
+                            break;
+
+                        case 'workflow':
+                            const workflows = this.getFilteredAndSortedCards(this.cards.filter(c => c.type === 'workflow'));
+                            html = this.renderGridHTML(workflows);
+                            break;
+
+                        case 'dev':
+                            const dev = this.devs[this.state.devId];
+                            if (dev) {
+                                const devCards = this.getFilteredAndSortedCards(this.cards.filter(c => c.devId === dev.id));
+                                html = `
+                                <!-- 开发者资料卡片 -->
+                                <div class="bg-white rounded-2xl p-5 md:p-8 mb-6 md:mb-8 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center md:items-start gap-4 md:gap-6 text-center md:text-left">
+                                    <div class="relative">
+                                        <img src="${dev.avatar}" class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-gray-50 border-4 border-white shadow-md">
+                                        <div class="absolute bottom-0 right-0 w-6 h-6 bg-blue-500 border-2 border-white rounded-full flex items-center justify-center shadow-sm">
+                                            <i data-lucide="check" class="w-3 h-3 text-white"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 mt-2 md:mt-1">
+                                        <h2 class="text-xl md:text-2xl font-bold text-gray-800 mb-1 md:mb-2">${dev.name}</h2>
+                                        <p class="text-gray-500 text-xs md:text-sm max-w-lg mx-auto md:mx-0 leading-relaxed bg-gray-50 p-3 rounded-xl border border-gray-100">${dev.bio}</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center mb-4 md:mb-6 border-b border-gray-100 pb-2">
+                                    <h3 class="text-base md:text-lg font-bold text-gray-800">开发的模板 <span class="text-gray-400 text-sm font-normal ml-1">(${devCards.length})</span></h3>
+                                </div>
+                                ${this.renderGridHTML(devCards, "该开发者暂未发布模板")}
+                                `;
+                            }
+                            break;
+                    }
+                }
+
+                contentArea.innerHTML = html;
+                lucide.createIcons();
+            }
         };
 
-        // 工具函数
-        function formatUsageCount(count) {
-            if (count < 10000) return count.toString();
-            return (count / 10000).toFixed(1) + '万';
-        }
-
-        function formatDate(timestamp) {
-            const d = new Date(timestamp);
-            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-        }
-
-        // 处理卡片点击
-        function handleCardClick(id) {
-            // 增加使用次数
-            state.cards = state.cards.map(c => c.id === id ? { ...c, usageCount: c.usageCount + 1 } : c);
-            
-            // 重新渲染卡片
-            renderCards();
-            
-            // 跳转链接
-            window.open('https://www.coze.cn/template', '_blank');
-        }
-
-        // 处理开发者点击
-        function handleDevClick(e, devId) {
-            e.stopPropagation(); // 阻止卡片点击事件
-            state.selectedDevId = devId;
-            state.currentView = 'developer';
-            window.scrollTo(0, 0);
-            updateUI();
-        }
-
-        // 处理导航点击
-        function handleNavClick(view) {
-            state.currentView = view;
-            state.searchQuery = '';
-            state.selectedDevId = null;
-            document.getElementById('search-input').value = '';
-            window.scrollTo(0, 0);
-            updateUI();
-        }
-
-        // 设置排序方式
-        function setSortBy(sortBy) {
-            state.sortBy = sortBy;
-            
-            // 更新排序按钮样式
-            if (sortBy === 'latest') {
-                document.getElementById('sort-latest').classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
-                document.getElementById('sort-latest').classList.add('bg-gray-800', 'text-white');
-                document.getElementById('sort-hottest').classList.remove('bg-gray-800', 'text-white');
-                document.getElementById('sort-hottest').classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
-            } else {
-                document.getElementById('sort-hottest').classList.remove('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
-                document.getElementById('sort-hottest').classList.add('bg-gray-800', 'text-white');
-                document.getElementById('sort-latest').classList.remove('bg-gray-800', 'text-white');
-                document.getElementById('sort-latest').classList.add('bg-gray-100', 'text-gray-600', 'hover:bg-gray-200');
-            }
-            
-            renderCards();
-        }
-
-        // 筛选和排序卡片
-        function getFilteredAndSortedCards() {
-            let result = [...state.cards];
-
-            // 按视图筛选
-            if (state.currentView === 'apps') result = result.filter(c => c.type === 'app');
-            if (state.currentView === 'workflows') result = result.filter(c => c.type === 'workflow');
-            if (state.currentView === 'developer' && state.selectedDevId) result = result.filter(c => c.devId === state.selectedDevId);
-
-            // 按搜索词筛选
-            if (state.searchQuery) {
-                const q = state.searchQuery.toLowerCase();
-                result = result.filter(c => 
-                    c.title.toLowerCase().includes(q) || 
-                    initialDevelopers[c.devId].name.toLowerCase().includes(q)
-                );
-            }
-
-            // 排序
-            result.sort((a, b) => {
-                if (state.sortBy === 'latest') {
-                    return a.publishTime - b.publishTime;
-                } else {
-                    return b.usageCount - a.usageCount;
-                }
-            });
-
-            return result;
-        }
-
-        // 创建卡片元素
-        function createCardElement(data) {
-            const dev = initialDevelopers[data.devId];
-            const card = document.createElement('div');
-            card.className = 'group bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden cursor-pointer hover:shadow-md transition-all duration-300 flex flex-col h-full';
-            card.onclick = () => handleCardClick(data.id);
-            
-            card.innerHTML = `
-                <!-- 卡片图片 -->
-                <div class="h-32 md:h-40 w-full overflow-hidden relative bg-gray-100">
-                    <img src="${data.image}" alt="${data.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                    <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs font-medium text-gray-700 shadow-sm flex items-center">
-                        ${data.type === 'app' ? 
-                            '<i class="fas fa-gamepad w-3 h-3 mr-1 text-blue-500"></i> 趣味APP' : 
-                            '<i class="fas fa-microchip w-3 h-3 mr-1 text-purple-500"></i> AI工作流'}
-                    </div>
-                </div>
-                
-                <!-- 卡片内容 -->
-                <div class="p-4 flex flex-col flex-grow">
-                    <h3 class="font-bold text-gray-800 text-sm md:text-base line-clamp-1 mb-1 group-hover:text-blue-600 transition-colors">${data.title}</h3>
-                    <p class="text-gray-500 text-xs md:text-sm line-clamp-2 mb-4 flex-grow">${data.desc}</p>
-                    
-                    <!-- 卡片底部 -->
-                    <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50">
-                        <div class="flex items-center group/dev cursor-pointer z-10 hover:bg-gray-50 p-1 rounded-md -ml-1 transition-colors" onclick="event.stopPropagation(); handleDevClick(event, '${data.devId}')">
-                            <img src="${dev.avatar}" alt="${dev.name}" class="w-5 h-5 rounded-full bg-gray-200 mr-2 border border-gray-100" />
-                            <span class="text-xs text-gray-600 font-medium group-hover/dev:text-blue-600">${dev.name}</span>
-                        </div>
-                        
-                        <div class="flex flex-col items-end gap-1">
-                            <div class="text-[10px] text-gray-400">${formatDate(data.publishTime)}</div>
-                            <div class="flex items-center text-[11px] text-gray-500 font-medium bg-gray-50 px-2 py-0.5 rounded-full">
-                                <i class="fas fa-fire w-3 h-3 mr-1 text-orange-500"></i>
-                                ${formatUsageCount(data.usageCount)}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            return card;
-        }
-
-        // 渲染开发者视图
-        function renderDeveloperView(devId) {
-            const dev = initialDevelopers[devId];
-            const filteredCards = getFilteredAndSortedCards();
-            
-            return `
-                <div class="animate-fade-in">
-                    <!-- 开发者头部 -->
-                    <div class="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 mb-8 flex flex-col md:flex-row items-center md:items-start gap-6 relative overflow-hidden">
-                        <div class="w-24 h-24 md:w-32 md:h-32 rounded-full bg-gray-50 border-4 border-white shadow-md z-10 overflow-hidden flex-shrink-0">
-                            <img src="${dev.avatar}" alt="${dev.name}" class="w-full h-full object-cover" />
-                        </div>
-                        <div class="text-center md:text-left z-10 flex-1">
-                            <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">${dev.name}</h1>
-                            <p class="text-gray-500 mb-4 max-w-lg">${dev.bio}</p>
-                            <div class="flex items-center justify-center md:justify-start space-x-4 text-sm font-medium">
-                                <div class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full">
-                                    作品数：${filteredCards.length}
-                                </div>
-                            </div>
-                        </div>
-                        <!-- 装饰背景 -->
-                        <div class="absolute top-0 right-0 w-full h-32 bg-gradient-to-b from-blue-50 to-white z-0"></div>
-                    </div>
-
-                    <!-- 开发者的卡片 -->
-                    <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center border-b border-gray-200 pb-2">
-                        <i class="fas fa-user w-5 h-5 mr-2 text-gray-400"></i> TA创建的所有卡片
-                    </h2>
-                    <div id="developer-cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                        <!-- 卡片会在这里动态生成 -->
-                    </div>
-                </div>
-            `;
-        }
-
-        // 渲染应用/工作流视图
-        function renderAppsWorkflowsView() {
-            const viewTitle = state.currentView === 'apps' ? '趣味APP' : 'AI工作流';
-            const viewDescription = state.currentView === 'apps' 
-                ? '探索由五〇六所开发者精心制作的互动娱乐与趣味应用。' 
-                : '通过强大的AI自动化流程，将繁杂的工作化繁为简。';
-            
-            return `
-                <div class="animate-fade-in">
-                    <div class="mb-6">
-                        <h1 class="text-2xl font-bold text-gray-800 mb-2">${viewTitle}</h1>
-                        <p class="text-gray-500 text-sm">${viewDescription}</p>
-                    </div>
-                    <div id="cards-container" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                        <!-- 卡片会在这里动态生成 -->
-                    </div>
-                </div>
-            `;
-        }
-
-        // 渲染卡片
-        function renderCards() {
-            const cardsContainer = document.getElementById('cards-container') || 
-                                 document.getElementById('developer-cards-container') || 
-                                 document.getElementById('home-apps') ||
-                                 document.getElementById('home-workflows');
-            
-            if (!cardsContainer) return;
-            
-            // 清空容器
-            cardsContainer.innerHTML = '';
-            
-            const filteredCards = getFilteredAndSortedCards();
-            
-            if (filteredCards.length === 0) {
-                cardsContainer.innerHTML = `
-                    <div class="text-center py-20 text-gray-400 col-span-full">
-                        <i class="fas fa-search w-12 h-12 mx-auto mb-3 opacity-20"></i>
-                        <p>没有找到相关内容</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // 添加卡片
-            filteredCards.forEach(cardData => {
-                const cardElement = createCardElement(cardData);
-                cardsContainer.appendChild(cardElement);
-            });
-        }
-
-        // 更新UI
-        function updateUI() {
-            const contentArea = document.getElementById('content-area');
-            const homeView = document.getElementById('home-view');
-            
-            // 更新导航激活状态
-            const navItems = ['home', 'apps', 'workflows'];
-            navItems.forEach(item => {
-                const isActive = state.currentView === item && !state.selectedDevId;
-                const desktopBtn = document.getElementById(`nav-${item}`);
-                const mobileBtn = document.getElementById(`mobile-nav-${item}`);
-                
-                if (desktopBtn) {
-                    if (isActive) {
-                        desktopBtn.classList.remove('text-gray-500', 'hover:text-blue-600', 'hover:bg-gray-50');
-                        desktopBtn.classList.add('text-blue-600', 'bg-blue-50', 'md:bg-gray-50', 'md:border-r-4', 'md:border-blue-600');
-                    } else {
-                        desktopBtn.classList.remove('text-blue-600', 'bg-blue-50', 'md:bg-gray-50', 'md:border-r-4', 'md:border-blue-600');
-                        desktopBtn.classList.add('text-gray-500', 'hover:text-blue-600', 'hover:bg-gray-50');
-                    }
-                }
-                
-                if (mobileBtn) {
-                    if (isActive) {
-                        mobileBtn.classList.remove('text-gray-500');
-                        mobileBtn.classList.add('text-blue-600');
-                    } else {
-                        mobileBtn.classList.remove('text-blue-600');
-                        mobileBtn.classList.add('text-gray-500');
-                    }
-                }
-            });
-            
-            // 根据当前视图渲染内容
-            if (state.currentView === 'home' && !state.selectedDevId) {
-                // 显示主页视图
-                document.getElementById('home-view').classList.remove('hidden');
-                contentArea.innerHTML = `
-                    <div id="home-view" class="space-y-10 animate-fade-in">
-                        <!-- Hero Banner -->
-                        <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl p-6 md:p-10 text-white shadow-lg relative overflow-hidden">
-                            <div class="relative z-10 max-w-2xl">
-                                <h1 class="text-2xl md:text-4xl font-extrabold mb-3 tracking-tight">驱动未来的工作与娱乐方式</h1>
-                                <p class="text-purple-100 md:text-lg mb-6 leading-relaxed">五〇六所致力于打造最前沿的AI工具与趣味应用。探索我们的平台，发现能激发灵感、提升效率的智能模块。</p>
-                                <button onclick="handleNavClick('workflows')" class="bg-white text-purple-700 px-6 py-2.5 rounded-full font-bold text-sm hover:bg-purple-50 transition-colors shadow-md">
-                                    立即探索
-                                </button>
-                            </div>
-                            <!-- 装饰背景形状 -->
-                            <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full transform translate-x-1/2 -translate-y-1/4 blur-2xl"></div>
-                            <div class="absolute bottom-0 right-32 w-48 h-48 bg-purple-400 opacity-20 rounded-full transform translate-y-1/2 blur-xl"></div>
-                        </div>
-
-                        <!-- 首页部分 -->
-                        <section>
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-lg md:text-xl font-bold flex items-center text-gray-800">
-                                    <i class="fas fa-gamepad w-5 h-5 mr-2 text-blue-500"></i> 推荐趣味APP
-                                </h2>
-                                <button onclick="handleNavClick('apps')" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                                    查看全部 <i class="fas fa-chevron-right w-4 h-4 ml-0.5"></i>
-                                </button>
-                            </div>
-                            <div id="home-apps" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                                <!-- 趣味APP卡片会在这里动态生成 -->
-                            </div>
-                        </section>
-
-                        <section>
-                            <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-lg md:text-xl font-bold flex items-center text-gray-800">
-                                    <i class="fas fa-microchip w-5 h-5 mr-2 text-purple-500"></i> 推荐AI工作流
-                                </h2>
-                                <button onclick="handleNavClick('workflows')" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                                    查看全部 <i class="fas fa-chevron-right w-4 h-4 ml-0.5"></i>
-                                </button>
-                            </div>
-                            <div id="home-workflows" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                                <!-- AI工作流卡片会在这里动态生成 -->
-                            </div>
-                        </section>
-                    </div>
-                `;
-                
-                // 渲染主页的推荐卡片
-                const homeAppsContainer = document.getElementById('home-apps');
-                const homeWorkflowsContainer = document.getElementById('home-workflows');
-                
-                if (homeAppsContainer) {
-                    homeAppsContainer.innerHTML = '';
-                    const appCards = state.cards.filter(c => c.type === 'app').slice(0, 4);
-                    appCards.forEach(cardData => {
-                        const cardElement = createCardElement(cardData);
-                        homeAppsContainer.appendChild(cardElement);
-                    });
-                }
-                
-                if (homeWorkflowsContainer) {
-                    homeWorkflowsContainer.innerHTML = '';
-                    const workflowCards = state.cards.filter(c => c.type === 'workflow').slice(0, 4);
-                    workflowCards.forEach(cardData => {
-                        const cardElement = createCardElement(cardData);
-                        homeWorkflowsContainer.appendChild(cardElement);
-                    });
-                }
-                
-            } else if (state.currentView === 'developer' && state.selectedDevId) {
-                // 显示开发者视图
-                contentArea.innerHTML = renderDeveloperView(state.selectedDevId);
-                renderCards();
-                
-            } else if (state.currentView === 'apps' || state.currentView === 'workflows') {
-                // 显示应用/工作流视图
-                contentArea.innerHTML = renderAppsWorkflowsView();
-                renderCards();
-            }
-        }
-
-        // 初始化应用
-        function initApp() {
-            // 设置搜索输入事件监听
-            document.getElementById('search-input').addEventListener('input', function(e) {
-                state.searchQuery = e.target.value;
-                renderCards();
-            });
-            
-            // 初始渲染
-            updateUI();
-            
-            // 初始渲染主页推荐卡片
-            const homeAppsContainer = document.getElementById('home-apps');
-            const homeWorkflowsContainer = document.getElementById('home-workflows');
-            
-            if (homeAppsContainer) {
-                const appCards = state.cards.filter(c => c.type === 'app').slice(0, 4);
-                appCards.forEach(cardData => {
-                    const cardElement = createCardElement(cardData);
-                    homeAppsContainer.appendChild(cardElement);
-                });
-            }
-            
-            if (homeWorkflowsContainer) {
-                const workflowCards = state.cards.filter(c => c.type === 'workflow').slice(0, 4);
-                workflowCards.forEach(cardData => {
-                    const cardElement = createCardElement(cardData);
-                    homeWorkflowsContainer.appendChild(cardElement);
-                });
-            }
-        }
-
-        // 当页面加载完成后初始化应用
-        document.addEventListener('DOMContentLoaded', initApp);
+        // 启动应用
+        window.onload = () => {
+            app.init();
+        };
     </script>
 </body>
 </html>
